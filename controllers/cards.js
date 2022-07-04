@@ -1,33 +1,70 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/NotFoundError');
+const InvalidDataError = require('../errors/InvalidDataError');
 
-module.exports.createCard = (req, res) => {
+const options = { new: true };
+
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'карточка не создана' }));
+    .then((card) => res.status(201).send({ card }))
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+      } else {
+        next(error);
+      }
+    });
 };
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ cards }))
-    .catch(() => res.status(500).send({ message: 'карточка не найдена' }));
+    .catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'карточка не удалена' }));
+module.exports.deleteCard = (req, res, next) => {
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка для удаления не найдена');
+      }
+      res.status(200).send({ card });
+    })
+    .catch(next);
 };
 
-module.exports.likeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.paarams.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'лайк не поставлен' }));
+module.exports.likeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, options)
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка на нейдена');
+      }
+      res.status(200).send({ card });
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+        return;
+      }
+      next(error);
+    });
 };
 
-module.exports.dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
-    .then((card) => res.send({ card }))
-    .catch(() => res.status(500).send({ message: 'лайк не удален' }));
+module.exports.dislikeCard = (req, res, next) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, options)
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Карточка на нейдена');
+      }
+      res.status(200).send({ card });
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+        return;
+      }
+      next(error);
+    });
 };

@@ -1,37 +1,75 @@
 const User = require('../models/user');
+const InvalidDataError = require('../errors/InvalidDataError');
+const NotFoundError = require('../errors/NotFoundError');
 
-module.exports.createUser = (req, res) => {
+const options = { new: true };
+
+module.exports.createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Пользователь не создан' }));
+    .then((user) => res.status(201).send({ data: user }))
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+      } else {
+        next(error);
+      }
+    });
 };
 
-module.exports.findUsers = (req, res) => {
+module.exports.findUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((users) => res
+      .send({ data: users }))
+    .catch(next);
 };
 
-module.exports.findUserById = (req, res) => {
+module.exports.findUserById = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.status(200).send(user);
+    })
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about })
-    .then((data) => res.send({ data }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findByIdAndUpdate(req.user._id, { name, about }, options)
+    .then((data) => {
+      if (!data) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.send({ data });
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+        return;
+      }
+      next(error);
+    });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar })
-    .then((data) => res.send({ data }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  User.findByIdAndUpdate(req.user._id, { avatar }, options)
+    .then((data) => {
+      if (!data) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+      res.send({ data });
+    })
+    .catch((error) => {
+      if (error.name === 'ValidationError') {
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+        return;
+      }
+      next(error);
+    });
 };

@@ -27,6 +27,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res) => {
+  res.status(404).send({ message: '404 - страница не найдена' });
+});
+
 app.listen(PORT, () => {
   console.log('app started', PORT);
 });
