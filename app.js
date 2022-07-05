@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const { errors } = require('celebrate');
 
 const app = express();
 
@@ -20,6 +21,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use('/', userRouter);
 app.use('/', cardsRouter);
 
+app.use(errors());
+
+app.use(errorsHandler);
+
 app.use((req, res, next) => {
   req.user = {
     _id: '62c1c2f535a3ff0adf38c449',
@@ -27,8 +32,6 @@ app.use((req, res, next) => {
 
   next();
 });
-
-app.use(errorsHandler);
 
 app.use((req, res) => {
   res.status(404).send({ message: '404 - страница не найдена' });
