@@ -25,17 +25,6 @@ module.exports.findUsers = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.findUserById = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      }
-      res.status(200).send(user);
-    })
-    .catch(next);
-};
-
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -45,7 +34,7 @@ module.exports.getUserById = (req, res, next) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         throw new InvalidDataError('Переданы некорректные данные');
       } else {
         next(err);
