@@ -64,11 +64,11 @@ module.exports.updateUser = (req, res, next) => {
       res.send({ data });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-        return;
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
+        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
 
