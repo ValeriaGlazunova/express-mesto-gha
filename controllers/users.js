@@ -44,7 +44,13 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.status(200).send(user);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        throw new NotFoundError('Переданы некорректные данные');
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.updateUser = (req, res, next) => {
