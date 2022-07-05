@@ -46,7 +46,7 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new NotFoundError('Переданы некорректные данные');
+        throw new InvalidDataError('Переданы некорректные данные');
       } else {
         next(err);
       }
@@ -83,10 +83,10 @@ module.exports.updateAvatar = (req, res, next) => {
       res.send({ data });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-        return;
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
+        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+      } else {
+        next(error);
       }
-      next(error);
     });
 };
