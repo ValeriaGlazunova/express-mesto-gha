@@ -8,6 +8,7 @@ const app = express();
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const errorsHandler = require('./middlewares/errorsHandler');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -33,9 +34,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res) => {
-  res.status(404).send({ message: '404 - страница не найдена' });
-});
+app.use('/*', (req, res, next) => (
+  next(new NotFoundError('Такой страницы не существует'))
+));
 
 app.listen(PORT, () => {
   console.log('app started', PORT);
