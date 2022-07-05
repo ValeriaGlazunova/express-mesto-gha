@@ -19,8 +19,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   family: 4,
 });
 
-app.use('/', userRouter);
-app.use('/', cardsRouter);
+app.use(userRouter);
+app.use(cardsRouter);
 
 app.use(errors());
 
@@ -34,8 +34,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/*', (req, res, next) => (
-  next(new NotFoundError('Такой страницы не существует'))
+app.use('*', (req, res, next) => next(
+  new NotFoundError('Запрошен не существующий ресурс'),
 ));
 
 app.listen(PORT, () => {

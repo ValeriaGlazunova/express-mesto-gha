@@ -6,15 +6,13 @@ const options = { new: true };
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-  const owner = req.user._id;
-  const likes = [];
 
   Card.create({
-    name, link, owner, likes,
+    name, link, owner: req.user._id,
   })
     .then((card) => res.status(200).send({ data: card }))
     .catch((error) => {
-      if (error.name === 'ValidationError' || error.name === 'CastError') {
+      if (error.name === 'CastError') {
         throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
       } else {
         next(error);
@@ -48,7 +46,7 @@ module.exports.likeCard = (req, res, next) => {
       res.status(200).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError' || error.name === 'CastError') {
+      if (error.name === 'CastError') {
         throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
       } else {
         next(error);
@@ -65,7 +63,7 @@ module.exports.dislikeCard = (req, res, next) => {
       res.status(200).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError' || error.name === 'CastError') {
+      if (error.name === 'CastError') {
         throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
       } else {
         next(error);
