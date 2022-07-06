@@ -19,11 +19,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   family: 4,
 });
 
-app.use(userRouter);
-app.use(cardsRouter);
-
-app.use(errors());
-
 app.use(errorsHandler);
 
 app.use((req, res, next) => {
@@ -33,6 +28,11 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use(userRouter);
+app.use(cardsRouter);
+
+app.use(errors());
 
 app.use('*', (req, res, next) => next(
   new NotFoundError('Запрошен не существующий ресурс'),

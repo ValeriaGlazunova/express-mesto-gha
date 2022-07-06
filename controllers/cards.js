@@ -6,9 +6,9 @@ const options = { new: true };
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
-
+  const likes = [];
   Card.create({
-    name, link, owner: req.user._id,
+    name, link, owner: req.user._id, likes,
   })
     .then((card) => res.status(200).send({ data: card }))
     .catch((error) => {
