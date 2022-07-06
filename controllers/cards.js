@@ -12,7 +12,7 @@ module.exports.createCard = (req, res, next) => {
   })
     .then((card) => res.status(200).send({ data: card }))
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);

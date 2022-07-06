@@ -31,11 +31,11 @@ module.exports.getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.status(200).send(user);
+      res.send(user);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+        next(new NotFoundError('нет пользователя с таким id'));
         return;
       } next(error);
     });
@@ -52,7 +52,7 @@ module.exports.updateUser = (req, res, next) => {
       res.send({ data });
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
@@ -70,7 +70,7 @@ module.exports.updateAvatar = (req, res, next) => {
       res.send({ data });
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
