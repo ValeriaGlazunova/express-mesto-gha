@@ -43,11 +43,11 @@ module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-    .then((data) => {
-      if (!data) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.send({ data });
+      res.send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError' || error.name === 'CastError') {
@@ -61,11 +61,11 @@ module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
-    .then((data) => {
-      if (!data) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.send({ data });
+      res.send({ data: user });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {
