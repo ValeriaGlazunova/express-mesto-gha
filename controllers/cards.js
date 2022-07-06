@@ -48,9 +48,8 @@ module.exports.likeCard = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-      } else {
-        next(error);
-      }
+        return;
+      } next(error);
     });
 };
 
@@ -65,8 +64,7 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-      } else {
-        next(error);
-      }
+        return;
+      } next(error);
     });
 };
