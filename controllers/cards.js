@@ -13,7 +13,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.status(200).send({ data: card }))
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }
@@ -47,7 +47,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }
@@ -64,7 +64,7 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }

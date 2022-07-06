@@ -35,7 +35,7 @@ module.exports.getUserById = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }
@@ -54,7 +54,7 @@ module.exports.updateUser = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }
@@ -73,7 +73,7 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
+        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
       } else {
         next(error);
       }
