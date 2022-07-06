@@ -37,6 +37,4 @@ app.use('*', (req, res, next) => next(
   new NotFoundError('Запрошен не существующий ресурс'),
 ));
 
-app.listen(PORT, () => {
-  console.log('app started', PORT);
-});
+app.listen(PORT);
