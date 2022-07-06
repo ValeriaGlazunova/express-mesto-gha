@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
       res.status(200).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
@@ -41,7 +41,11 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка на нейдена');
@@ -49,7 +53,7 @@ module.exports.likeCard = (req, res, next) => {
       res.status(200).send({ data: card });
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
@@ -57,7 +61,11 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true, runValidators: true },
+  )
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка на нейдена');
@@ -65,7 +73,7 @@ module.exports.dislikeCard = (req, res, next) => {
       res.status(200).send({ data: card });
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
