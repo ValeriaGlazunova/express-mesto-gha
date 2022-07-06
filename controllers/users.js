@@ -31,10 +31,10 @@ module.exports.getUserById = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.send({ user });
+      res.send(user);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'ValidationError') {
         next(new InvalidDataError('нет пользователя с таким id'));
         return;
       } next(error);
@@ -49,7 +49,7 @@ module.exports.updateUser = (req, res, next) => {
       if (!data) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.send(data);
+      res.send({ data });
     })
     .catch((error) => {
       if (error.name === 'ValidationError') {

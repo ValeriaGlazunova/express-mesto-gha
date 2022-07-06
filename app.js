@@ -33,7 +33,7 @@ app.use(cardsRouter);
 app.use(errors());
 app.use(errorsHandler);
 
-app.use('*', (req, res, next) => next(
+app.use((req, res, next) => next(
   new NotFoundError('Запрошен не существующий ресурс'),
 ));
 
