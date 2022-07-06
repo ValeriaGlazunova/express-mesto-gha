@@ -2,8 +2,6 @@ const User = require('../models/user');
 const InvalidDataError = require('../errors/InvalidDataError');
 const NotFoundError = require('../errors/NotFoundError');
 
-const options = { new: true };
-
 module.exports.createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
 
@@ -34,7 +32,7 @@ module.exports.getUserById = (req, res, next) => {
       res.send(user);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'CastError') {
         next(new InvalidDataError('нет пользователя с таким id'));
         return;
       } next(error);
@@ -44,7 +42,7 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, options)
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
     .then((data) => {
       if (!data) {
         throw new NotFoundError('Пользователь не найден');
@@ -62,7 +60,7 @@ module.exports.updateUser = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, options)
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
     .then((data) => {
       if (!data) {
         throw new NotFoundError('Пользователь не найден');
