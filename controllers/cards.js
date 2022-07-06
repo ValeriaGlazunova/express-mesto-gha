@@ -33,7 +33,7 @@ module.exports.deleteCard = (req, res, next) => {
       res.status(200).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
@@ -65,7 +65,7 @@ module.exports.dislikeCard = (req, res, next) => {
       res.status(200).send({ card });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);

@@ -50,7 +50,7 @@ module.exports.updateUser = (req, res, next) => {
       res.send({ data });
     })
     .catch((error) => {
-      if (error.name === 'ValidationError') {
+      if (error.name === 'ValidationError' || error.name === 'CastError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
         return;
       } next(error);
