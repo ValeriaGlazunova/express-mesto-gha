@@ -33,11 +33,11 @@ module.exports.getUserById = (req, res, next) => {
       }
       res.status(200).send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new InvalidDataError('Переданы некорректные данные');
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        throw new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`);
       } else {
-        next(err);
+        next(error);
       }
     });
 };
