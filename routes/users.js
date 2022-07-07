@@ -11,7 +11,7 @@ userRouter.post('/', createUser);
 
 userRouter.get('/', findUsers);
 
-userRouter.get('//:userId', getUserById);
+userRouter.get('/:userId', getUserById);
 
 userRouter.patch('/me', updateUser);
 

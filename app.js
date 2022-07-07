@@ -8,6 +8,7 @@ const app = express();
 const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const errorsHandler = require('./middlewares/errorsHandler');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -30,7 +31,7 @@ app.use('/users', userRouter);
 app.use('/cards', cardsRouter);
 
 app.use((req, res) => {
-  res.status(404).send({ message: 'Страницы не существует' });
+  res.send(NotFoundError);
 });
 
 app.use(errors());
