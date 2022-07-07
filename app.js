@@ -30,8 +30,8 @@ app.use((req, res, next) => {
 app.use('/users', userRouter);
 app.use('/cards', cardsRouter);
 
-app.use((req, res) => {
-  res.send(new NotFoundError('такого пути не существует'));
+app.use((req, res, next) => {
+  next(new NotFoundError('Такого пути не существует'));
 });
 
 app.use(errors());
