@@ -32,8 +32,8 @@ module.exports.getUserById = (req, res, next) => {
       res.send(user);
     })
     .catch((error) => {
-      if (error.name === 'ValidationError' || error.name === 'CastError') {
-        next(new InvalidDataError('нет пользователя с таким id'));
+      if (error.name === 'CastError') {
+        next(new InvalidDataError('некорректный id пользователя'));
         return;
       } next(error);
     });
