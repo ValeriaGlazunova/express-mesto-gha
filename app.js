@@ -26,8 +26,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(userRouter);
-app.use(cardsRouter);
+app.use('/users', userRouter);
+app.use('cards', cardsRouter);
 
 app.use((req, res) => {
   res.status(404).send({ message: 'Страницы не существует' });
