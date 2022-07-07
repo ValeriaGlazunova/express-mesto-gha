@@ -32,7 +32,7 @@ module.exports.getUserById = (req, res, next) => {
       res.send(user);
     })
     .catch((error) => {
-      if (error.name === 'CastError') {
+      if (error.name === 'CastError' || error.name === 'ValidationError') {
         next(new InvalidDataError('некорректный id пользователя'));
         return;
       } next(error);
