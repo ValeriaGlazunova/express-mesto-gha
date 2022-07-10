@@ -1,12 +1,26 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const InvalidDataError = require('../errors/InvalidDataError');
 const NotFoundError = require('../errors/NotFoundError');
 
-module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
+const SALT_ROUNDS = 10;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+}
+
+module.exports.createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => {
+      User.create({
+        name, about, avatar, email, password: hash,
+      })
+        .then((user) => res.status(201).send({ data: user }));
+    })
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
