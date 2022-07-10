@@ -1,13 +1,32 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const InvalidDataError = require('../errors/InvalidDataError');
 const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const SALT_ROUNDS = 10;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-}
+
+  return User.findUserByCredentials(email, password)
+    .orFail(() => { throw new UnauthorizedError('Неправильное имя пользователя или пароль'); })
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        { expiresIn: 3600 },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600,
+        httpOnly: true,
+      });
+      res
+        .status(200)
+        .send({ message: 'Аутентификация успешна' });
+    })
+    .catch(next);
+};
 
 module.exports.createUser = (req, res, next) => {
   const {
