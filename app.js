@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { errors } = require('celebrate');
+const { errors, Joi, celebrate } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 
 const app = express();
@@ -20,8 +20,29 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   family: 4,
 });
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login,
+);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: ,
+    }),
+  }),
+  createUser,
+);
 
 app.use('/users', userRouter);
 app.use('/cards', cardsRouter);
