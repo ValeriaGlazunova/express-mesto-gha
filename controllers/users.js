@@ -4,6 +4,7 @@ const User = require('../models/user');
 const InvalidDataError = require('../errors/InvalidDataError');
 const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
+const DuplicateError = require('../errors/DuplicateError');
 
 const SALT_ROUNDS = 10;
 
@@ -43,6 +44,8 @@ module.exports.createUser = (req, res, next) => {
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+      } else if (error.code === 11000) {
+        next(new DuplicateError('Пользователь с таким e-mail уже существует'));
       } else {
         next(error);
       }

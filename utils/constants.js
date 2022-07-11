@@ -3,6 +3,7 @@ const ERR_NOT_FOUND = 404;
 const ERR_DEFAULT = 500;
 const ERR_AUTH = 401;
 const ERR_FORBIDDEN = 403;
+const ERR_DUPLICATE = 409;
 
 module.exports = {
   ERR_BAD_REQUEST,
@@ -10,4 +11,5 @@ module.exports = {
   ERR_DEFAULT,
   ERR_AUTH,
   ERR_FORBIDDEN,
+  ERR_DUPLICATE,
 };
