@@ -70,6 +70,20 @@ module.exports.getUserById = (req, res, next) => {
     });
 };
 
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => { throw new NotFoundError('Пользователь не найден'); })
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((error) => {
+      if (error.name === 'CastError') {
+        next(new InvalidDataError('некорректный id пользователя'));
+        return;
+      } next(error);
+    });
+};
+
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
