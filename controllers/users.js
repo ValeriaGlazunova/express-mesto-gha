@@ -37,18 +37,26 @@ module.exports.createUser = (req, res, next) => {
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => {
       User.create({
-        name, about, avatar, email, password: hash,
+        email, password: hash, name, about, avatar,
       })
-        .then((user) => res.status(201).send({ data: user }));
-    })
-    .catch((error) => {
-      if (error.name === 'ValidationError') {
-        next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-      } else if (error.code === 11000) {
-        next(new DuplicateError('Пользователь с таким e-mail уже существует'));
-      } else {
-        next(error);
-      }
+        .then((user) => res.send({
+          data: {
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+            _id: user._id,
+          },
+        }))
+        .catch((error) => {
+          if (error.name === 'ValidationError') {
+            next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
+          } else if (error.code === 11000) {
+            next(new DuplicateError('Пользователь с таким e-mail уже существует'));
+          } else {
+            next(error);
+          }
+        });
     });
 };
 
