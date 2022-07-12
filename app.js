@@ -10,6 +10,7 @@ const userRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 const errorsHandler = require('./middlewares/errorsHandler');
 const NotFoundError = require('./errors/NotFoundError');
+const { linkRegExp } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 
@@ -38,7 +39,7 @@ app.post(
       password: Joi.string().required().min(8),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: ,
+      avatar: Joi.string().pattern(linkRegExp),
     }),
   }),
   createUser,
