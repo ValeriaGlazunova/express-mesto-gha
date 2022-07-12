@@ -1,7 +1,6 @@
 const cardsRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { linkRegExp } = require('../utils/constants');
-const auth = require('../middlewares/auth');
 const {
   createCard,
   getCards,
@@ -18,7 +17,6 @@ cardsRouter.post(
       link: Joi.string().regex(linkRegExp).required(),
     }),
   }),
-  auth,
   createCard,
 );
 cardsRouter.get('/', getCards);
@@ -29,7 +27,6 @@ cardsRouter.delete(
       cardID: Joi.string().required().length(24).hex(),
     }),
   }),
-  auth,
   deleteCard,
 );
 cardsRouter.put(
@@ -39,7 +36,6 @@ cardsRouter.put(
       cardId: Joi.string().required().length(24).hex(),
     }),
   }),
-  auth,
   likeCard,
 );
 cardsRouter.delete(
@@ -49,7 +45,6 @@ cardsRouter.delete(
       cardId: Joi.string().required().length(24).hex(),
     }),
   }),
-  auth,
   dislikeCard,
 );
 
