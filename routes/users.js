@@ -1,7 +1,6 @@
 const userRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 const { linkRegExp } = require('../utils/constants');
-const auth = require('../middlewares/auth');
 
 const {
   findUsers,
@@ -11,7 +10,7 @@ const {
   getCurrentUser,
 } = require('../controllers/users');
 
-userRouter.get('/', auth, findUsers);
+userRouter.get('/', findUsers);
 
 userRouter.get(
   '/:userId',
@@ -20,11 +19,10 @@ userRouter.get(
       userId: Joi.string().required().length(24).hex(),
     }),
   }),
-  auth,
   getUserById,
 );
 
-userRouter.get('/me', auth, getCurrentUser);
+userRouter.get('/me', getCurrentUser);
 
 userRouter.patch(
   '/me',
@@ -34,7 +32,6 @@ userRouter.patch(
       about: Joi.string().required().min(2).max(30),
     }),
   }),
-  auth,
   updateUser,
 );
 
@@ -45,7 +42,6 @@ userRouter.patch(
       avatar: Joi.string().regex(linkRegExp),
     }),
   }),
-  auth,
   updateAvatar,
 );
 

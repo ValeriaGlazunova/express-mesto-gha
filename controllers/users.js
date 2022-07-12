@@ -1,33 +1,12 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const InvalidDataError = require('../errors/InvalidDataError');
 const NotFoundError = require('../errors/NotFoundError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
 const DuplicateError = require('../errors/DuplicateError');
 
 const SALT_ROUNDS = 10;
-
-module.exports.login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-    .orFail(() => { throw new UnauthorizedError('Неправильное имя пользователя или пароль'); })
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        { expiresIn: 3600 },
-      );
-      res.cookie('jwt', token, {
-        maxAge: 3600,
-        httpOnly: true,
-      });
-      res
-        .status(200)
-        .send({ message: 'Аутентификация успешна' });
-    })
-    .catch(next);
-};
 
 module.exports.createUser = (req, res, next) => {
   const {
@@ -48,13 +27,13 @@ module.exports.createUser = (req, res, next) => {
             _id: user._id,
           },
         }))
-        .catch((error) => {
-          if (error.name === 'ValidationError') {
-            next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
-          } if (error.code === 11000) {
-            next(new DuplicateError('Пользователь с таким e-mail уже существует'));
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            next(new InvalidDataError(`Переданы некорректные данные: ${err.message}`));
+          } else if (err.code === 11000) {
+            next(new DuplicateError('Пользователь с данным email уже существует'));
           } else {
-            next(error);
+            next(err);
           }
         });
     });
@@ -87,12 +66,7 @@ module.exports.getCurrentUser = (req, res, next) => {
     .then((user) => {
       res.status(200).send(user);
     })
-    .catch((error) => {
-      if (error.name === 'CastError') {
-        next(new InvalidDataError('некорректный id пользователя'));
-        return;
-      } next(error);
-    });
+    .catch(next);
 };
 
 module.exports.updateUser = (req, res, next) => {
@@ -129,4 +103,25 @@ module.exports.updateAvatar = (req, res, next) => {
         return;
       } next(error);
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
+      res
+        .status(200)
+        .send({ message: 'Вход выполнен' });
+    })
+    .catch(next);
 };
