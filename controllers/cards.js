@@ -25,16 +25,15 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
+    .orFail(new NotFoundError('Карточка для удаления не найдена'))
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточка для удаления не найдена');
-      } else if (String(card.owner._id) !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         throw new ErrForbidden('Нет прав у текущего пользователя');
-      } else {
-        card.remove()
-          .then(() => res.status(200).send({ card }));
       }
+      Card.findByIdAndRemove(req.params.cardId)
+        .then(() => res.status(200).send({ card }))
+        .catch(next);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
