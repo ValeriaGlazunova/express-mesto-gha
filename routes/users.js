@@ -12,6 +12,8 @@ const {
 
 userRouter.get('/', findUsers);
 
+userRouter.get('/me', getCurrentUser);
+
 userRouter.get(
   '/:userId',
   celebrate({
@@ -21,8 +23,6 @@ userRouter.get(
   }),
   getUserById,
 );
-
-userRouter.get('/me', getCurrentUser);
 
 userRouter.patch(
   '/me',
