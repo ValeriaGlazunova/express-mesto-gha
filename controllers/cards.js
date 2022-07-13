@@ -32,7 +32,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ErrForbidden('Нет прав у текущего пользователя');
       }
       Card.findByIdAndRemove(req.params.cardId)
-        .then(() => res.status(200).send({ card }))
+        .then(() => res.status(200).send({ data: card }))
         .catch(next);
     })
     .catch((error) => {
