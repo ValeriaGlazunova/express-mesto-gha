@@ -38,7 +38,7 @@ module.exports.deleteCard = (req, res, next) => {
         throw new ErrForbidden('Нет прав у текущего пользователя');
       }
       Card.findByIdAndRemove(req.params.cardId)
-        .then(() => res.status(200).send({ data: card }))
+        .then(() => res.status(200).send(card))
         .catch(next);
     })
     .catch((error) => {
@@ -59,7 +59,7 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Карточка на нейдена');
       }
-      res.status(200).send({ data: card });
+      res.status(200).send(card);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
@@ -79,7 +79,7 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!card) {
         throw new NotFoundError('Карточка на нейдена');
       }
-      res.status(200).send({ data: card });
+      res.status(200).send(card);
     })
     .catch((error) => {
       if (error.name === 'CastError') {
