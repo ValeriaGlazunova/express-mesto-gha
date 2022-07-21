@@ -8,7 +8,12 @@ module.exports.createCard = (req, res, next) => {
   Card.create({
     name, link, owner: req.user._id,
   })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(201).send({
+      name: card.name,
+      link: card.link,
+      owner: card.owner,
+      _id: card._id,
+    }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
         next(new InvalidDataError(`Запрос содержит некорректные данные ${error.message}`));
