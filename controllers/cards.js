@@ -13,6 +13,7 @@ module.exports.createCard = (req, res, next) => {
       link: card.link,
       owner: card.owner,
       _id: card._id,
+      likes: card.likes,
     }))
     .catch((error) => {
       if (error.name === 'ValidationError') {
