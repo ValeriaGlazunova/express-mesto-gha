@@ -11,7 +11,7 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.status(201).send({
       name: card.name,
       link: card.link,
-      owner: card.owner,
+      owner: card.owner._id,
       _id: card._id,
       likes: card.likes,
     }))
@@ -34,7 +34,7 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(new NotFoundError('Карточка для удаления не найдена'))
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
+      if (card.owner._id.toString() !== req.user._id) {
         throw new ErrForbidden('Нет прав у текущего пользователя');
       }
       Card.findByIdAndRemove(req.params.cardId)
